@@ -2,7 +2,7 @@
 This file contains helper functions used in the API.
 """
 
-from typing import Type, Dict, Union
+from typing import Dict, Union
 
 
 def split(id_number: int) -> Dict[ str, Union[int, int]]:
@@ -18,16 +18,16 @@ def split(id_number: int) -> Dict[ str, Union[int, int]]:
     # test if id_number is a valid integer 
 
     if type(id_number) != int:
-    	raise Exception("The input must be an integer! \n 
-			 provided type:", type(id_number))
+    	raise Exception("The input must be an integer!")
 
     # convert to string 
     id_number_str = str(id_number)
 
+    # slice the first 6 and the last 5 numbers
     birthday = id_number_str[:6]
     person_number = id_number_str[6:]
 
-
+    # return the splitted numbers as a dictionary
     splitted_id_number = {
         'birthday': birthday, 
         'person_number': person_number
