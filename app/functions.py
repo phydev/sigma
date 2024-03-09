@@ -6,6 +6,25 @@ from typing import Type, Dict, Union
 from datetime import date
 import asyncio
 
+
+def validate_date(year: str, month: str, day: str) -> bool:
+    day = int(day)
+    month = int(month)
+    year = int(year)
+    
+    if day > 31 or month > 12:
+        return False
+    elif month in [4, 6, 9, 11] and day > 30:
+        return False
+    elif month == 2 and day > 29:
+        return False
+    elif month == 2 and day > 28 and year % 4 != 0:
+        return False
+    elif year * day * month < 0:
+        return False
+    else:
+        return True
+
 def split(id_number: str) -> Dict[ str, Union[Type[date], str]]:
     """
     This function splits the Norwegian ID number into two numbers
@@ -33,11 +52,15 @@ def split(id_number: str) -> Dict[ str, Union[Type[date], str]]:
  
     # slice the birthday and save it as a date object
     # with the format year-month-day
-    birthday = date(
-            int(birth_year), 
-            int(id_number[2:4]), 
-            int(id_number[:2])
-            )
+
+    if validate_date(birth_year, id_number[2:4], id_number[:2]):
+        birthday = date(
+                int(birth_year), 
+                int(id_number[2:4]), 
+                int(id_number[:2])
+                )
+    else:
+        birthday = date(3000, 12, 25)
 
     
 
@@ -116,6 +139,8 @@ def is_valid_id_number(id_number: str) -> bool:
         return False
     elif control_number_2 % 11 != 0:  
         return False
+    elif get_age_from(id_number) == False:
+        return False
     else:
         return True 
     
@@ -147,11 +172,11 @@ def get_age_from(id_number: str) -> int:
     # check if a full year has not occurred yet
     if (today.month, today.day) < (birthday.month, birthday.day):
         age -= 1
-
-    if age < 0:
-        raise Exception("The person has not been born yet!")
     
-    return age
+    if age < 0:
+        return False
+    else:
+        return age
 
 
 async def run_awk(filename: str, id_number: str) -> str:

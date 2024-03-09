@@ -83,6 +83,46 @@ async def retrieve_valid_id_numbers() -> Dict[str, int]:
 
     return response
 
+@app.get("/retrieve_stratified_valid_numbers")
+async def retrieve_stratified_valid_numbers() -> Dict[str, object]:
+    """
+    This endpoint returns the number of valid id numbers
+    stratified by gender and tripartite age groups. We
+    choose to stratify the age groups in three categories:
+    - 0-19, 20-64 and >= 65 years old
+    This standard is used by the Statistikk Sentralbyrå.
+    """
+    filename = 'data/fnr.txt'
+
+    # we will use a dictionary to store the counts
+    
+    valid_numbers = {
+                        'male': 0,
+                        'female': 0,
+                        'age_groups': 
+                        {
+                           '0-19': 0, 
+                            '20-64': 0,
+                            '>=65': 0
+                        }
+                    }
+    
+    with open(filename, 'r') as file:
+        for line in file:
+            if is_valid_id_number(line.strip()):
+                valid_numbers[get_gender_from(line.strip())] += 1
+                age = get_age_from(line.strip())
+                if age < 20:
+                    valid_numbers['age_groups']['0-19'] += 1
+                elif age < 65:
+                    valid_numbers['age_groups']['20-64'] += 1
+                else:
+                    valid_numbers['age_groups']['>=65'] += 1
+    
+    print(valid_numbers)
+    return valid_numbers
+    
+
 if __name__ =='__main__':
     # run rest api with uvicorn
     import uvicorn
