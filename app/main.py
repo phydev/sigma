@@ -1,5 +1,7 @@
 from fastapi import FastAPI
-from functions import is_valid_id_number
+from functions import (is_valid_id_number, 
+                       get_age_from
+                       )
 from typing import Dict
 app = FastAPI()
 
@@ -10,13 +12,27 @@ async def root():
 
 # check if an id number is valid
 @app.post("/validate/{id_number}")
-async def validate(id_number: int) -> Dict:
+async def validate(id_number: str) -> Dict:
     """
     This endpoint returns if id_number is a valid Norwegian ID number
     """
 
     # check if the id number is valid
-    response = { "message": is_valid_id_number(id_number)}
+    response = { "valid": is_valid_id_number(id_number)}
+
+    # use jsonfy from 
+    return response
+
+@app.post("/age/{id_number}")
+async def age(id_number: str) -> Dict:
+    """
+    This endpoint returns the age of a person given their id number
+    """
+
+    # check if the id number is valid
+    response = { "message": "This endpoint is not yet implemented"}
+
+    response = {'age': get_age_from(id_number)}
 
     # use jsonfy from 
     return response
