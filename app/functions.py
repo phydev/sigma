@@ -18,7 +18,7 @@ def split(id_number: int) -> Dict[ str, Union[int, int]]:
     # test if id_number is a valid integer 
 
     if type(id_number) != int:
-    	raise Exception("The input must be an integer!")
+        raise Exception("The input must be an integer!")
 
     # convert to string 
     id_number_str = str(id_number)
@@ -45,7 +45,7 @@ def is_odd(number: int) -> bool:
     """
 
     if type(number) != int:
-    	raise Exception("The input must be an integer! \
+        raise Exception("The input must be an integer! \
                         Oddness is only defined for integers.")
 
     return number % 2 != 0
