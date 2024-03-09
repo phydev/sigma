@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from functions import (is_valid_id_number, 
-                       get_age_from
+                       get_age_from,
+                       get_gender_from,
+                       run_awk
                        )
 from typing import Dict
 app = FastAPI()
@@ -29,7 +31,7 @@ async def gender(id_number: str) -> Dict:
     This endpoint returns the gender based on the id_number
     """
 
-    response = {'gender': get_age_from(id_number)}
+    response = {'gender': get_gender_from(id_number)}
 
     return response
 
@@ -44,6 +46,20 @@ async def age(id_number: str) -> Dict:
     # use jsonfy from 
     return response
 
+@app.post("/search/{id_number}")
+async def search(id_number: str) -> Dict[str, list]:
+    """
+    This endpoint tells in which row the id_number is in the database
+    """
+    filename = 'data/fnr.txt'
+
+    # we are running asyncio code, so we need to await the result
+    result = await run_awk(filename, id_number)
+
+    # Parse the output to get only the list of line numbers
+    line_numbers = result.strip().split('\n') if result else []
+
+    return {"lines": line_numbers}
 
 
 if __name__ =='__main__':

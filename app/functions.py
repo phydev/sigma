@@ -4,6 +4,7 @@ This file contains helper functions used in the API.
 
 from typing import Type, Dict, Union
 from datetime import date
+import asyncio
 
 def split(id_number: str) -> Dict[ str, Union[Type[date], str]]:
     """
@@ -148,3 +149,28 @@ def get_age_from(id_number: str) -> int:
         raise Exception("The person has not been born yet!")
     
     return age
+
+
+async def run_awk(filename: str, id_number: str) -> str:
+    """
+    This function runs the awk command to search for an entry in a
+    data file and returns the line number of the entry.
+    We define this function as asyncronous to avoid blocking the event loop.
+    :param filename: the name of the file to search
+    :param id_number: the id_number to search for
+    """
+
+    cmd = f'awk \'/{id_number}/ {{print NR}}\' {filename}'
+    process = await asyncio.create_subprocess_shell(
+        cmd,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+    )
+
+    stdout, stderr = await process.communicate()
+
+    if stderr:
+        raise RuntimeError(f'Error executing awk: {stderr.decode()}')
+    return stdout.decode('utf-8')
+
+    
