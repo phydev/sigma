@@ -101,6 +101,9 @@ def is_valid_id_number(id_number: str) -> bool:
     if type(id_number) != str:
         raise TypeError("The input must be an integer encoded as string!")
     
+    if not id_number.isdigit():
+        return False
+
     id_number_list = transform_to_list(id_number)
 
     if len(id_number_list) != 11:

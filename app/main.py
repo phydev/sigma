@@ -62,6 +62,27 @@ async def search(id_number: str) -> Dict[str, list]:
     return {"lines": line_numbers}
 
 
+@app.get("/retrieve_valid_id_numbers")
+async def retrieve_valid_id_numbers() -> Dict[str, int]:
+    """
+    This endpoint returns all the valid id numbers in the database
+    """
+    filename = 'data/fnr.txt'
+
+    counter = 0
+
+    # //TODO: this could be done in a more efficient way
+    # using an external library or a more efficient algorithm
+    # but for the size of the file we are working with, this is fine
+    with open(filename, 'r') as file:
+        for line in file:
+            if is_valid_id_number(line.strip()):
+                counter += 1
+    
+    response = {'total_valid_id_numbers': counter}
+
+    return response
+
 if __name__ =='__main__':
     # run rest api with uvicorn
     import uvicorn
