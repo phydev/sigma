@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.functions import is_valid_id_number
+from functions import is_valid_id_number
 from typing import Dict
 app = FastAPI()
 
@@ -9,10 +9,10 @@ async def root():
 
 
 # check if an id number is valid
-@app.post("/id_number/validate")
-async def validate_id_number(id_number: int) -> Dict:
+@app.post("/validate/{id_number}")
+async def validate(id_number: int) -> Dict:
     """
-    This endpoint returns if id_number is a  valid Norwegian ID number
+    This endpoint returns if id_number is a valid Norwegian ID number
     """
 
     # check if the id number is valid
@@ -21,3 +21,10 @@ async def validate_id_number(id_number: int) -> Dict:
     # use jsonfy from 
     return response
 
+
+
+if __name__ =='__main__':
+    # run rest api with uvicorn
+    import uvicorn
+
+    uvicorn.run(app, host="127.0.0.1", port=8070)
