@@ -44,4 +44,8 @@ def is_odd(number: int) -> bool:
     :return: True if the number is odd, False otherwise
     """
 
+    if type(number) != int:
+    	raise Exception("The input must be an integer! \
+                        Oddness is only defined for integers.")
+
     return number % 2 != 0
