@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from app.functions import is_valid_id_number
+from typing import Dict
 app = FastAPI()
 
 @app.get("/")
@@ -9,7 +10,7 @@ async def root():
 
 # check if an id number is valid
 @app.post("/id_number/validate")
-async def validate_id_number(id_number: int):
+async def validate_id_number(id_number: int) -> Dict:
     """
     This endpoint returns if id_number is a  valid Norwegian ID number
     """
