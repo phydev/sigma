@@ -23,14 +23,21 @@ async def validate(id_number: str) -> Dict:
     # use jsonfy from 
     return response
 
+@app.post("/gender/{id_number}")
+async def gender(id_number: str) -> Dict:
+    """
+    This endpoint returns the gender based on the id_number
+    """
+
+    response = {'gender': get_age_from(id_number)}
+
+    return response
+
 @app.post("/age/{id_number}")
 async def age(id_number: str) -> Dict:
     """
     This endpoint returns the age of a person given their id number
     """
-
-    # check if the id number is valid
-    response = { "message": "This endpoint is not yet implemented"}
 
     response = {'age': get_age_from(id_number)}
 

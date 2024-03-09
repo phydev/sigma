@@ -2,10 +2,10 @@
 This file contains helper functions used in the API.
 """
 
-from typing import Dict, Union
+from typing import Type, Dict, Union
+from datetime import date
 
-
-def split(id_number: int) -> Dict[ str, Union[int, int]]:
+def split(id_number: str) -> Dict[ str, Union[Type[date], str]]:
     """
     This function splits the Norwegian ID number into two numbers
     the birthday (first 6 numbers) and the person number (last 5 numbers)
@@ -15,17 +15,30 @@ def split(id_number: int) -> Dict[ str, Union[int, int]]:
     
     """
 
-    # test if id_number is a valid integer 
+    # test if id_number is provided as string
 
-    if type(id_number) != int:
-        raise Exception("The input must be an integer!")
+    if type(id_number) != str:
+        raise TypeError("The input must be an integer encoded as string!")
 
-    # convert to string 
-    id_number_str = str(id_number)
+    person_number = id_number[6:]
 
-    # slice the first 6 and the last 5 numbers
-    birthday = id_number_str[:6]
-    person_number = id_number_str[6:]
+    # check in which century the person was born
+    # and add the first two digits of the year
+    if int(person_number[0]) <=4:
+        birth_year = '19' + id_number[4:6]
+    else:
+        birth_year = '20' + id_number[4:6]
+
+ 
+    # slice the birthday and save it as a date object
+    # with the format year-month-day
+    birthday = date(
+            int(birth_year), 
+            int(id_number[2:4]), 
+            int(id_number[:2])
+            )
+
+    
 
     # return the splitted numbers as a dictionary
     splitted_id_number = {
@@ -45,12 +58,12 @@ def is_odd(number: int) -> bool:
     """
 
     if type(number) != int:
-        raise Exception("The input must be an integer! \
+        raise TypeError("The input must be an integer! \
                         Oddness is only defined for integers.")
 
     return number % 2 != 0
 
-def transform_to_list(id_number: int) -> list:
+def transform_to_list(id_number: str) -> list:
     """
     This function transforms the input number into a list of integers
     """
@@ -73,7 +86,7 @@ def dot_product(a: int, b: int) -> int:
 
     return sum([a[i] * b[i] for i in range(len(a))])
 
-def is_valid_id_number(id_number: int) -> bool:
+def is_valid_id_number(id_number: str) -> bool:
     """
     This function checks if the input is a valid Norwegian ID number.
     We will use conditionally defined return calls, which can speed up
@@ -84,10 +97,10 @@ def is_valid_id_number(id_number: int) -> bool:
     control_vector1 = [3, 7, 6, 1, 8, 9, 4, 5, 2, 1]
     control_vector2 = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2, 1]
 
-    if type(id_number) != int:
-        return False
-    else:
-        id_number_list = transform_to_list(id_number)
+    if type(id_number) != str:
+        raise TypeError("The input must be an integer encoded as string!")
+    
+    id_number_list = transform_to_list(id_number)
 
     if len(id_number_list) != 11:
         return False
@@ -101,4 +114,37 @@ def is_valid_id_number(id_number: int) -> bool:
         return False
     else:
         return True 
+    
+def get_gender_from(id_number: str) -> str:
+    """
+    This function returns the gender based on the id_number
+    :param id_number: 11 digits Norwegian id number
+    :return: gender of the person 
+    """
 
+    if is_odd(int(id_number[8])):
+        return "male"
+    else:
+        return "female"
+
+def get_age_from(id_number: str) -> int:
+    """
+    This function returns the age of a person given their id number
+    :param id_number: 11 digits Norwegian id number.
+    :return: the age of the person
+    """
+
+    splitted_id = split(id_number)
+    birthday = splitted_id['birthday']
+    today = date.today()
+    age = today.year - birthday.year
+    # Unfortunately the datetime module does not have a 
+    # method to calculate the age directly, so we need to
+    # check if a full year has not occurred yet
+    if (today.month, today.day) < (birthday.month, birthday.day):
+        age -= 1
+
+    if age < 0:
+        raise Exception("The person has not been born yet!")
+    
+    return age
