@@ -26,6 +26,6 @@ RUN pip install -r requirements.txt
 EXPOSE 8070
 
 # Run the application:
-COPY app/main.py .
-COPY app/definitions.yml .
+COPY app/* .
+
 CMD ["python", "main.py"]
