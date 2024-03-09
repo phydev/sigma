@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from functions import (is_valid_id_number, 
+from .functions import (is_valid_id_number, 
                        get_age_from,
                        get_gender_from,
                        run_awk

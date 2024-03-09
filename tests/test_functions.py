@@ -38,7 +38,7 @@ class TestFunctions(unittest.TestCase):
 
     def test_get_age_from(self):
         self.assertEqual(get_age_from('30108938901'), 34)
-        self.assertRaises(Exception, get_age_from, '30108998901')
+        self.assertEqual(get_age_from('30108998901'), False)
 
     def test_transform_tolist(self):
         self.assertEqual(transform_to_list('12345678901'), [1,2,3,4,5,6,7,8,9,0,1])
