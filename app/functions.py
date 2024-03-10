@@ -11,7 +11,7 @@ def validate_date(year: str, month: str, day: str) -> bool:
     day = int(day)
     month = int(month)
     year = int(year)
-    
+
     if day > 31 or month > 12:
         return False
     elif month in [4, 6, 9, 11] and day > 30:
@@ -200,5 +200,3 @@ async def run_awk(filename: str, id_number: str) -> str:
     if stderr:
         raise RuntimeError(f'Error executing awk: {stderr.decode()}')
     return stdout.decode('utf-8')
-
-    
