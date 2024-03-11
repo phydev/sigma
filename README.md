@@ -1,4 +1,5 @@
 # Σ-Project
+![Build Status](https://github.com/phydev/sigma/actions/workflows/python-app.yml/badge.svg)
 
 Sigma is an API for validating and retrieving information from Norwegian ID numbers.
 
