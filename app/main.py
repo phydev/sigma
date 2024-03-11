@@ -4,6 +4,7 @@ from app.functions import (is_valid_id_number,
                        get_gender_from,
                        run_awk
                        )
+from pydantic import BaseModel, Field
 from typing import Dict
 
 description = " \n ## Endpoints: \n - **/validate/{id_number}** \n  You will be able to check if the id number is valid.\n- **/gender/{id_number}**\n    You will be able to obtain the gender of the person.\n - **/age/{id_number}** You will be able to obtain the age of the person.\n - **/search/{id_number}** You will be able to search for the id number in the database.\n - **/retrieve_valid_id_numbers** You will be able to retrieve the total number of valid id numbers in the database.\n - **/retrieve_stratified_valid_numbers**\n You will be able to retrieve the number of valid \n id numbers stratified by gender and age groups."
@@ -23,13 +24,40 @@ app = FastAPI(title="Sigma API",
         "url": "https://opensource.org/license/mit",
     },)
 
+# Pydantic model definitions for the responses
+class ValidateResponse(BaseModel):
+    valid: bool
+
+class GenderResponse(BaseModel):
+    gender: str
+
+class AgeResponse(BaseModel):
+    age: int
+
+class SearchResponse(BaseModel):
+    lines: list
+
+class ValidIdNumbers(BaseModel):
+    total_valid_id_numbers: int
+
+class AgeGroups(BaseModel):
+    range_0_19: int = Field(..., alias="0-19")
+    range_20_64: int = Field(..., alias="20-64")
+    range_above_65: int = Field(..., alias=">=65")
+
+class StratifiedValidNumbers(BaseModel):
+    male: int
+    female: int
+    age_groups: AgeGroups
+
+
 @app.get("/")
 async def root():
     return {"message": "Sigma API is up and running!"}
 
 
 # check if an id number is valid
-@app.post("/validate/{id_number}")
+@app.post("/validate/{id_number}", response_model = ValidateResponse )
 async def validate(id_number: str) -> Dict:
     """
     This endpoint returns if id_number is a valid Norwegian ID number
@@ -41,7 +69,7 @@ async def validate(id_number: str) -> Dict:
     # use jsonfy from 
     return response
 
-@app.post("/gender/{id_number}")
+@app.post("/gender/{id_number}", response_model = GenderResponse)
 async def gender(id_number: str) -> Dict:
     """
     This endpoint returns the gender based on the id_number
@@ -51,7 +79,7 @@ async def gender(id_number: str) -> Dict:
 
     return response
 
-@app.post("/age/{id_number}")
+@app.post("/age/{id_number}", response_model = AgeResponse)
 async def age(id_number: str) -> Dict:
     """
     This endpoint returns the age of a person given their id number
@@ -62,7 +90,7 @@ async def age(id_number: str) -> Dict:
     # use jsonfy from 
     return response
 
-@app.post("/search/{id_number}")
+@app.post("/search/{id_number}", response_model = SearchResponse)
 async def search(id_number: str) -> Dict[str, list]:
     """
     This endpoint tells in which row the id_number is in the database
@@ -78,7 +106,7 @@ async def search(id_number: str) -> Dict[str, list]:
     return {"lines": line_numbers}
 
 
-@app.get("/retrieve_valid_id_numbers")
+@app.get("/retrieve_valid_id_numbers", response_model = ValidIdNumbers)
 async def retrieve_valid_id_numbers() -> Dict[str, int]:
     """
     This endpoint returns all the valid id numbers in the database
@@ -99,13 +127,14 @@ async def retrieve_valid_id_numbers() -> Dict[str, int]:
 
     return response
 
-@app.get("/retrieve_stratified_valid_numbers")
+@app.get("/retrieve_stratified_valid_numbers", 
+         response_model = StratifiedValidNumbers)
 async def retrieve_stratified_valid_numbers() -> Dict[str, object]:
     """
     This endpoint returns the number of valid id numbers
     stratified by gender and tripartite age groups. We
     choose to stratify the age groups in three categories:
-    - 0-19, 20-64 and >= 65 years old
+    - 0-19, 20-64 and >= 65 years old \n
     This standard is used by the Statistikk Sentralbyrå.
     """
     filename = 'data/fnr.txt'
@@ -135,7 +164,7 @@ async def retrieve_stratified_valid_numbers() -> Dict[str, object]:
                 else:
                     valid_numbers['age_groups']['>=65'] += 1
     
-    print(valid_numbers)
+ 
     return valid_numbers
     
 
