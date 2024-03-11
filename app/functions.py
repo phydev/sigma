@@ -186,6 +186,7 @@ async def run_awk(filename: str, id_number: str) -> str:
     We define this function as asyncronous to avoid blocking the event loop.
     :param filename: the name of the file to search
     :param id_number: the id_number to search for
+    :return line_number: the line number of the entry
     """
 
     cmd = f'awk \'/{id_number}/ {{print NR}}\' {filename}'
