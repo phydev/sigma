@@ -1,34 +1,12 @@
 from fastapi import FastAPI
-from functions import (is_valid_id_number, 
+from app.functions import (is_valid_id_number, 
                        get_age_from,
                        get_gender_from,
                        run_awk
                        )
 from typing import Dict
 
-description = """
-    This is a simple API that allows you to validate 
-    Norwegian ID numbers, retrieve the age, gender and
-    check if the id number is in the database.
-
-    ## Endpoints:
-    
-    - /validate/{id_number}
-        You will be able to check if the id number is valid.
-    - /gender/{id_number}
-        You will be able to obtain the gender of the person.
-    - /age/{id_number}
-        You will be able to obtain the age of the person.
-    - /search/{id_number}
-        You will be able to search for the id number in the database.
-    - /retrieve_valid_id_numbers
-        You will be able to retrieve the total number of valid 
-        id numbers in the database.
-    - /retrieve_stratified_valid_numbers
-        You will be able to retrieve the number of valid 
-        id numbers stratified by gender and age groups.
-
-"""
+description = " \n ## Endpoints: \n - **/validate/{id_number}** \n  You will be able to check if the id number is valid.\n- **/gender/{id_number}**\n    You will be able to obtain the gender of the person.\n - **/age/{id_number}** You will be able to obtain the age of the person.\n - **/search/{id_number}** You will be able to search for the id number in the database.\n - **/retrieve_valid_id_numbers** You will be able to retrieve the total number of valid id numbers in the database.\n - **/retrieve_stratified_valid_numbers**\n You will be able to retrieve the number of valid \n id numbers stratified by gender and age groups."
 
 app = FastAPI(title="Sigma API",
     description=description,
