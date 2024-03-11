@@ -5,7 +5,44 @@ from .functions import (is_valid_id_number,
                        run_awk
                        )
 from typing import Dict
-app = FastAPI()
+
+description = """
+    This is a simple API that allows you to validate 
+    Norwegian ID numbers, retrieve the age, gender and
+    check if the id number is in the database.
+
+    ## Endpoints:
+    - /validate/{id_number}
+        You will be able to check if the id number is valid.
+    - /gender/{id_number}
+        You will be able to obtain the gender of the person.
+    - /age/{id_number}
+        You will be able to obtain the age of the person.
+    - /search/{id_number}
+        You will be able to search for the id number in the database.
+    - /retrieve_valid_id_numbers
+        You will be able to retrieve the total number of valid 
+        id numbers in the database.
+    - /retrieve_stratified_valid_numbers
+        You will be able to retrieve the number of valid 
+        id numbers stratified by gender and age groups.
+
+"""
+
+app = FastAPI(title="Sigma API",
+    description=description,
+    summary="Deadpool's favorite app. Nuff said.",
+    version="0.0.1",
+    terms_of_service="Check the MIT license.",
+    contact={
+        "name": "Mauricio Moreira Soares",
+        "url": "http://phydev.github.io",
+        "email": "phydev@protonmail.ch",
+    },
+    license_info={
+        "name": "MIT",
+        "url": "https://opensource.org/license/mit",
+    },)
 
 @app.get("/")
 async def root():
