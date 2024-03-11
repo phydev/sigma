@@ -58,4 +58,7 @@ The repository is structured as follows:
 ├── README.md
 ```
 
+## Test coverage report
 
+<!-- Pytest Coverage Comment:Begin -->
+<!-- Pytest Coverage Comment:End -->
