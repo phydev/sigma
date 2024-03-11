@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from .functions import (is_valid_id_number, 
+from functions import (is_valid_id_number, 
                        get_age_from,
                        get_gender_from,
                        run_awk
@@ -12,6 +12,7 @@ description = """
     check if the id number is in the database.
 
     ## Endpoints:
+    
     - /validate/{id_number}
         You will be able to check if the id number is valid.
     - /gender/{id_number}
@@ -31,7 +32,7 @@ description = """
 
 app = FastAPI(title="Sigma API",
     description=description,
-    summary="Deadpool's favorite app. Nuff said.",
+    summary="This is a simple API to work with Norwegian ID numbers.",
     version="0.0.1",
     terms_of_service="Check the MIT license.",
     contact={
