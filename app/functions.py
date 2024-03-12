@@ -179,7 +179,7 @@ def get_age_from(id_number: str) -> int:
         return age
 
 
-async def run_awk(filename: str, id_number: str) -> str:
+async def run_awk(filename: str, id_number: str) -> list[str]:
     """
     This function runs the awk command to search for an entry in a
     data file and returns the line number of the entry.
@@ -200,4 +200,9 @@ async def run_awk(filename: str, id_number: str) -> str:
 
     if stderr:
         raise RuntimeError(f'Error executing awk: {stderr.decode()}')
-    return stdout.decode('utf-8')
+    
+    result = stdout.decode('utf-8')
+    
+    line_numbers = result.strip().split('\n') if result else []
+    
+    return line_numbers

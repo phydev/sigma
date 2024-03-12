@@ -98,10 +98,7 @@ async def search(id_number: str) -> Dict[str, list]:
     filename = 'data/fnr.txt'
 
     # we are running asyncio code, so we need to await the result
-    result = await run_awk(filename, id_number)
-
-    # Parse the output to get only the list of line numbers
-    line_numbers = result.strip().split('\n') if result else []
+    line_numbers = await run_awk(filename, id_number)
 
     return {"lines": line_numbers}
 

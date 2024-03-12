@@ -6,7 +6,8 @@ from app.functions import (split,
                            get_age_from, 
                            transform_to_list,
                            dot_product,
-                           is_valid_id_number
+                           is_valid_id_number,
+                           run_awk
                            )
 from datetime import date
 
@@ -126,6 +127,13 @@ class TestFunctions(unittest.TestCase):
         """
         for invalid_id in self.not_valid_ids:
             self.assertFalse(is_valid_id_number(invalid_id))
+
+class TestSyncIO(unittest.IsolatedAsyncioTestCase):
+
+         async def test_run_awk(self):
+             
+             response = await run_awk('data/test_data.txt', '03025600125')
+             self.assertEqual(response, ['5', '10'])
 
 if __name__ == '__main__':
     unittest.main()
