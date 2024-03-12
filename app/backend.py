@@ -17,6 +17,14 @@ import logging
 
 
 def validate_date(year: str, month: str, day: str) -> bool:
+    """
+    This function checks if the input date is valid
+    according to the Gregorian calendar rules.
+    :param year: year
+    :param month: month
+    :param day: day
+    :return: True if the date is valid, False otherwise
+    """
     day = int(day)
     month = int(month)
     year = int(year)
