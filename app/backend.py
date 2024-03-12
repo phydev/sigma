@@ -32,14 +32,15 @@ def validate_date(year: str, month: str, day: str) -> bool:
     else:
         return True
 
-def split(id_number: str) -> Dict[ str, Union[Type[date], str]]:
+
+def split(id_number: str) -> Dict[str, Union[Type[date], str]]:
     """
     This function splits the Norwegian ID number into two numbers
     the birthday (first 6 numbers) and the person number (last 5 numbers)
 
     :param id_number: 11 digits Nowegian id number
-    :return splitted_id_number: a dictionary containing the birthday and person number 
-    
+    :return splitted_id_number: a dictionary containing the birthday and person number
+
     """
 
     # test if id_number is provided as string
@@ -51,31 +52,21 @@ def split(id_number: str) -> Dict[ str, Union[Type[date], str]]:
 
     # check in which century the person was born
     # and add the first two digits of the year
-    if int(person_number[0]) <=4:
-        birth_year = '19' + id_number[4:6]
+    if int(person_number[0]) <= 4:
+        birth_year = "19" + id_number[4:6]
     else:
-        birth_year = '20' + id_number[4:6]
+        birth_year = "20" + id_number[4:6]
 
- 
     # slice the birthday and save it as a date object
     # with the format year-month-day
 
     if validate_date(birth_year, id_number[2:4], id_number[:2]):
-        birthday = date(
-                int(birth_year), 
-                int(id_number[2:4]), 
-                int(id_number[:2])
-                )
+        birthday = date(int(birth_year), int(id_number[2:4]), int(id_number[:2]))
     else:
         birthday = date(3000, 12, 25)
 
-    
-
     # return the splitted numbers as a dictionary
-    splitted_id_number = {
-        'birthday': birthday, 
-        'person_number': person_number
-        }
+    splitted_id_number = {"birthday": birthday, "person_number": person_number}
 
     return splitted_id_number
 
@@ -89,10 +80,13 @@ def is_odd(number: int) -> bool:
     """
 
     if type(number) != int:
-        raise TypeError("The input must be an integer! \
-                        Oddness is only defined for integers.")
+        raise TypeError(
+            "The input must be an integer! \
+                        Oddness is only defined for integers."
+        )
 
     return number % 2 != 0
+
 
 def transform_to_list(id_number: str) -> list:
     """
@@ -100,6 +94,7 @@ def transform_to_list(id_number: str) -> list:
     """
 
     return [int(digit) for digit in str(id_number)]
+
 
 def dot_product(a: int, b: int) -> int:
     """
@@ -117,6 +112,7 @@ def dot_product(a: int, b: int) -> int:
 
     return sum([a[i] * b[i] for i in range(len(a))])
 
+
 def is_valid_id_number(id_number: str) -> bool:
     """
     This function checks if the input is a valid Norwegian ID number.
@@ -130,7 +126,7 @@ def is_valid_id_number(id_number: str) -> bool:
 
     if type(id_number) != str:
         raise TypeError("The input must be an integer encoded as string!")
-    
+
     if not id_number.isdigit():
         return False
 
@@ -144,24 +140,26 @@ def is_valid_id_number(id_number: str) -> bool:
 
     if control_number_1 % 11 != 0:
         return False
-    elif control_number_2 % 11 != 0:  
+    elif control_number_2 % 11 != 0:
         return False
     elif get_age_from(id_number) == False:
         return False
     else:
-        return True 
-    
+        return True
+
+
 def get_gender_from(id_number: str) -> str:
     """
     This function returns the gender based on the id_number
     :param id_number: 11 digits Norwegian id number
-    :return: gender of the person 
+    :return: gender of the person
     """
 
     if is_odd(int(id_number[8])):
         return "male"
     else:
         return "female"
+
 
 def get_age_from(id_number: str) -> int:
     """
@@ -171,15 +169,15 @@ def get_age_from(id_number: str) -> int:
     """
 
     splitted_id = split(id_number)
-    birthday = splitted_id['birthday']
+    birthday = splitted_id["birthday"]
     today = date.today()
     age = today.year - birthday.year
-    # Unfortunately the datetime module does not have a 
+    # Unfortunately the datetime module does not have a
     # method to calculate the age directly, so we need to
     # check if a full year has not occurred yet
     if (today.month, today.day) < (birthday.month, birthday.day):
         age -= 1
-    
+
     if age < 0:
         return False
     else:
@@ -196,7 +194,7 @@ async def run_awk(filename: str, id_number: str) -> list[str]:
     :return line_number: the line number of the entry
     """
 
-    cmd = f'awk \'/{id_number}/ {{print NR}}\' {filename}'
+    cmd = f"awk '/{id_number}/ {{print NR}}' {filename}"
     process = await asyncio.create_subprocess_shell(
         cmd,
         stdout=asyncio.subprocess.PIPE,
@@ -206,41 +204,30 @@ async def run_awk(filename: str, id_number: str) -> list[str]:
     stdout, stderr = await process.communicate()
 
     if stderr:
-        raise RuntimeError(f'Error executing awk: {stderr.decode()}')
-    
-    result = stdout.decode('utf-8')
-    
-    line_numbers = result.strip().split('\n') if result else []
-    
+        raise RuntimeError(f"Error executing awk: {stderr.decode()}")
+
+    result = stdout.decode("utf-8")
+
+    line_numbers = result.strip().split("\n") if result else []
+
     return line_numbers
+
 
 def stratified_valid_numbers(filename: str) -> dict:
     """
     This function returns the number of valid id numbers
-    strat
+    stratified by gender and age groups.
     """
 
-
     valid_numbers = {
-                        'male': 
-                        {
-                           '0-19': 0, 
-                            '20-64': 0,
-                            '>=65': 0
-                        },
-                        'female': 
-                        {
-                           '0-19': 0, 
-                            '20-64': 0,
-                            '>=65': 0
-                        },
-                        
-                    }
-    
-    with open(filename, 'r') as file:
+        "male": {"0-19": 0, "20-64": 0, ">=65": 0},
+        "female": {"0-19": 0, "20-64": 0, ">=65": 0},
+    }
+
+    with open(filename, "r") as file:
 
         for line in file:
-            clean_line = line.strip() # remove "\n" and spaces
+            clean_line = line.strip()  # remove "\n" and spaces
 
             # check if it is a valid number
             is_valid = is_valid_id_number(clean_line)
@@ -253,11 +240,11 @@ def stratified_valid_numbers(filename: str) -> dict:
 
                 # stratify the age groups
                 if age < 20:
-                    valid_numbers[gender]['0-19'] += 1
+                    valid_numbers[gender]["0-19"] += 1
                 elif age < 65:
-                    valid_numbers[gender]['20-64'] += 1
+                    valid_numbers[gender]["20-64"] += 1
                 else:
-                    valid_numbers[gender]['>=65'] += 1
+                    valid_numbers[gender][">=65"] += 1
 
     return valid_numbers
 
@@ -265,12 +252,15 @@ def stratified_valid_numbers(filename: str) -> dict:
 class TimingMiddleware(BaseHTTPMiddleware):
     def __init__(self, app):
         super().__init__(app)
-        self.logger = logging.getLogger("uvicorn.error") 
+        self.logger = logging.getLogger("uvicorn.error")
 
-    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
+    async def dispatch(
+        self, request: Request, call_next: RequestResponseEndpoint
+    ) -> Response:
         start_time = time.time()
         response = await call_next(request)
         process_time = time.time() - start_time
-        self.logger.info(f"{request.method} {request.url} - {response.status_code}: Response time: {process_time:.5f}s")
+        self.logger.info(
+            f"{request.method} {request.url} - {response.status_code}: Response time: {process_time:.5f}s"
+        )
         return response
-    
