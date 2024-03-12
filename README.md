@@ -64,10 +64,10 @@ The repository is structured as follows:
 ---------- coverage: platform linux, python 3.10.13-final-0 ----------
 Name               Stmts   Miss  Cover   Missing
 ------------------------------------------------
-app/functions.py      80     11    86%   18, 20, 22, 24, 125, 191-202
-app/main.py           73      6    92%   98-106, 173-175
+app/functions.py      82      6    93%   18, 20, 22, 24, 125, 202
+app/main.py           72      5    93%   98-103, 170-172
 ------------------------------------------------
-TOTAL                153     17    89%
+TOTAL                154     11    93%
 
 
 ============================= slowest 10 durations =============================
