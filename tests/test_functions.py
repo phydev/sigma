@@ -1,6 +1,6 @@
 import unittest
 
-from app.functions import (split, 
+from app.backend import (split, 
                            is_odd, 
                            get_gender_from,
                            get_age_from, 
