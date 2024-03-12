@@ -4,7 +4,6 @@ from app.backend import (is_valid_id_number,
                        get_gender_from,
                        run_awk,
                        stratified_valid_numbers,
-                       pandas_stratified_valid_numbers,
                        TimingMiddleware
                        )
 from pydantic import BaseModel, Field
@@ -144,7 +143,7 @@ async def retrieve_stratified_valid_numbers() -> Dict[str, object]:
 
     # we will use a dictionary to store the counts
     
-    valid_numbers = pandas_stratified_valid_numbers(filename)
+    valid_numbers = stratified_valid_numbers(filename)
  
     return valid_numbers
     
