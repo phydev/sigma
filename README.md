@@ -63,25 +63,27 @@ The repository is structured as follows:
 ├── README.md
 ```
 
-## Test Coverage & Performance report - 11.03.2024
+## Test Coverage & Performance report - 12.03.2024
 
 ```
 ---------- coverage: platform linux, python 3.10.13-final-0 ----------
-Name               Stmts   Miss  Cover   Missing
-------------------------------------------------
-app/functions.py      82      6    93%   18, 20, 22, 24, 125, 202
-app/main.py           72      5    93%   98-103, 170-172
-------------------------------------------------
-TOTAL                154     11    93%
+Name             Stmts   Miss  Cover   Missing
+----------------------------------------------
+app/backend.py     112      6    95%   25, 27, 29, 31, 128, 207
+app/main.py         62      5    92%   117-122, 168-170
+----------------------------------------------
+TOTAL              174     11    94%
 
+1 file skipped due to complete coverage.
 
 ============================= slowest 10 durations =============================
-21.03s call     tests/test_main.py::test_retrieve_stratified_valid_numbers
-14.64s call     tests/test_main.py::test_retrieve_valid_id_numbers
+20.31s call     tests/test_main.py::test_retrieve_stratified_valid_numbers
+14.28s call     tests/test_main.py::test_retrieve_valid_id_numbers
+0.14s call     tests/test_backend.py::TestSyncIO::test_run_awk
 0.05s call     tests/test_main.py::test_root
 
-(7 durations < 0.005s hidden.  Use -vv to show these durations.)
-======================== 14 passed, 1 warning in 36.67s ========================
+(6 durations < 0.005s hidden.  Use -vv to show these durations.)
+======================== 16 passed, 1 warning in 35.79s ========================
 ```
 
 The slowest endpoints are `retrieve_valid_id_numbers` and `retrieve_stratified_valid_numbers` with response times of 9.88s and 15.29s respectively.
