@@ -7,9 +7,11 @@ from app.functions import (split,
                            transform_to_list,
                            dot_product,
                            is_valid_id_number,
-                           run_awk
+                           run_awk,
+                           stratified_valid_numbers
                            )
 from datetime import date
+
 
 class TestFunctions(unittest.TestCase):
 
@@ -39,6 +41,22 @@ class TestFunctions(unittest.TestCase):
                                     'female'
                                 ]
                             }
+        
+        self.stratification = {
+                    'male':
+                    {
+                        '0-19': 0, 
+                        '20-64': 0,
+                        '>=65': 0
+                    },
+                    'female': 
+                    {
+                        '0-19': 0, 
+                        '20-64': 0,
+                        '>=65': 0
+                    },
+                        
+                    }
     
     def test_split(self):
         """
@@ -127,6 +145,18 @@ class TestFunctions(unittest.TestCase):
         """
         for invalid_id in self.not_valid_ids:
             self.assertFalse(is_valid_id_number(invalid_id))
+
+
+    def test_stratified_valid_numbers(self):
+        """
+        Test if the function stratified_valid_numbers returns
+        the correct number of valid id numbers for each age group.
+        """
+
+        response = stratified_valid_numbers(filename = 'data/test_data.txt')
+
+        
+        self.assertEqual(response.keys(), self.stratification.keys())
 
 class TestSyncIO(unittest.IsolatedAsyncioTestCase):
 

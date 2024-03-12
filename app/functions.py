@@ -4,7 +4,16 @@ This file contains helper functions used in the API.
 
 from typing import Type, Dict, Union
 from datetime import date
+import dask.dataframe as dd
+import pandas as pd
 import asyncio
+
+# for costum logging
+from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
+from starlette.requests import Request
+from starlette.responses import Response
+import time
+import logging
 
 
 def validate_date(year: str, month: str, day: str) -> bool:
@@ -206,3 +215,131 @@ async def run_awk(filename: str, id_number: str) -> list[str]:
     line_numbers = result.strip().split('\n') if result else []
     
     return line_numbers
+
+def stratified_valid_numbers(filename: str) -> dict:
+    """
+    This function returns the number of valid id numbers
+    strat
+    """
+
+
+    valid_numbers = {
+                        'male': 
+                        {
+                           '0-19': 0, 
+                            '20-64': 0,
+                            '>=65': 0
+                        },
+                        'female': 
+                        {
+                           '0-19': 0, 
+                            '20-64': 0,
+                            '>=65': 0
+                        },
+                        
+                    }
+    
+    with open(filename, 'r') as file:
+
+        for line in file:
+            clean_line = line.strip() # remove "\n" and spaces
+
+            # check if it is a valid number
+            is_valid = is_valid_id_number(clean_line)
+
+            if is_valid:
+
+                # retrieve gender and age
+                gender = get_gender_from(clean_line)
+                age = get_age_from(clean_line)
+
+                # stratify the age groups
+                if age < 20:
+                    valid_numbers[gender]['0-19'] += 1
+                elif age < 65:
+                    valid_numbers[gender]['20-64'] += 1
+                else:
+                    valid_numbers[gender]['>=65'] += 1
+
+    return valid_numbers
+
+def get_age_group(age: int) -> str:
+    """
+    This function returns the age group of a person
+    given their age
+    :param age: the age of the person
+    :return: the age group of the person
+    """
+
+    if age < 20:
+        return '0-19'
+    elif age < 65:
+        return '20-64'
+    else:
+        return '>=65'
+
+
+
+def pandas_stratified_valid_numbers(filename: str) -> Dict:
+    """
+    Pandas version of the stratified_valid_numbers function
+    for high performance
+    """
+
+
+    # Read data into a Pandas DataFrame
+    df = pd.read_csv(filename, names=['id'], dtype={'id': 'string'}, header=None)
+
+    # Strip white space from 'id' column
+    df['id'] = df['id'].str.strip()
+
+    # Apply 'is_valid_id_number' function and filter valid IDs
+    df['is_valid'] = df['id'].apply(is_valid_id_number)
+    df = df[df['is_valid']]
+
+    # Apply 'get_gender_from' function to extract gender
+    df['gender'] = df['id'].apply(get_gender_from)
+
+    # Apply 'get_age_from' function to extract age
+    df['age'] = df['id'].apply(get_age_from)
+
+    # Apply 'get_age_group' function to determine the age group
+    df['age_group'] = df['age'].apply(get_age_group)
+
+    # Group by 'age_group' and count occurrences for females
+    table_female = df[df['gender'] == 'female'].groupby('age_group').count()
+
+    # Group by 'age_group' and count occurrences for males
+    table_male = df[df['gender'] == 'male'].groupby('age_group').count()
+
+    valid_numbers = {
+                        'male': 
+                        {
+                           '0-19': table_male.loc['0-19','id'], 
+                            '20-64': table_male.loc['20-64','id'],
+                            '>=65': table_male.loc['>=65','id']
+                        },
+                        'female': 
+                        {
+                           '0-19': table_female.loc['0-19','id'], 
+                            '20-64': table_female.loc['20-64','id'],
+                            '>=65': table_female.loc['>=65','id']
+                        },
+                        
+                    }
+    
+    return valid_numbers
+
+
+class TimingMiddleware(BaseHTTPMiddleware):
+    def __init__(self, app):
+        super().__init__(app)
+        self.logger = logging.getLogger("uvicorn.error") 
+
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
+        start_time = time.time()
+        response = await call_next(request)
+        process_time = time.time() - start_time
+        self.logger.info(f"{request.method} {request.url} - {response.status_code}: Response time: {process_time:.5f}s")
+        return response
+    

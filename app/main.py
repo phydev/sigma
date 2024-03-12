@@ -2,9 +2,13 @@ from fastapi import FastAPI
 from app.functions import (is_valid_id_number, 
                        get_age_from,
                        get_gender_from,
-                       run_awk
+                       run_awk,
+                       stratified_valid_numbers,
+                       pandas_stratified_valid_numbers,
+                       TimingMiddleware
                        )
 from pydantic import BaseModel, Field
+
 from typing import Dict
 
 description = " \n ## Endpoints: \n - **/validate/{id_number}** \n  You will be able to check if the id number is valid.\n- **/gender/{id_number}**\n    You will be able to obtain the gender of the person.\n - **/age/{id_number}** You will be able to obtain the age of the person.\n - **/search/{id_number}** You will be able to search for the id number in the database.\n - **/retrieve_valid_id_numbers** You will be able to retrieve the total number of valid id numbers in the database.\n - **/retrieve_stratified_valid_numbers**\n You will be able to retrieve the number of valid \n id numbers stratified by gender and age groups."
@@ -23,6 +27,8 @@ app = FastAPI(title="Sigma API",
         "name": "MIT",
         "url": "https://opensource.org/license/mit",
     },)
+
+app.add_middleware(TimingMiddleware)
 
 # Pydantic model definitions for the responses
 class ValidateResponse(BaseModel):
@@ -138,41 +144,7 @@ async def retrieve_stratified_valid_numbers() -> Dict[str, object]:
 
     # we will use a dictionary to store the counts
     
-    valid_numbers = {
-                        'male': 
-                        {
-                           '0-19': 0, 
-                            '20-64': 0,
-                            '>=65': 0
-                        },
-                        'female': 
-                        {
-                           '0-19': 0, 
-                            '20-64': 0,
-                            '>=65': 0
-                        },
-                        
-                    }
-    
-    with open(filename, 'r') as file:
-        for line in file:
-            clean_line = line.strip() # remove "\n"
-
-            # check if it is a valid number
-            if is_valid_id_number(clean_line):
-
-                # retrieve gender and age
-                gender = get_gender_from(clean_line)
-                age = get_age_from(clean_line)
-
-                # stratify the age groups
-                if age < 20:
-                    valid_numbers[gender]['0-19'] += 1
-                elif age < 65:
-                    valid_numbers[gender]['20-64'] += 1
-                else:
-                    valid_numbers[gender]['>=65'] += 1
-    
+    valid_numbers = pandas_stratified_valid_numbers(filename)
  
     return valid_numbers
     
@@ -181,4 +153,4 @@ if __name__ =='__main__':
     # run rest api with uvicorn
     import uvicorn
 
-    uvicorn.run(app, host="0.0.0.0", port=8070)
+    uvicorn.run(app, host="0.0.0.0", port=8070, log_level = "info")
