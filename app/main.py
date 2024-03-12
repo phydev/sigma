@@ -26,19 +26,19 @@ app = FastAPI(title="Sigma API",
 
 # Pydantic model definitions for the responses
 class ValidateResponse(BaseModel):
-    valid: bool
+    valid: bool = True
 
 class GenderResponse(BaseModel):
-    gender: str
+    gender: str = 'female'
 
 class AgeResponse(BaseModel):
-    age: int
+    age: int = 32
 
 class SearchResponse(BaseModel):
-    lines: list
+    lines: list = ['4', '5']
 
 class ValidIdNumbers(BaseModel):
-    total_valid_id_numbers: int
+    total_valid_id_numbers: int = 34506
 
 class AgeGroups(BaseModel):
     range_0_19: int = Field(..., alias="0-19")
@@ -53,7 +53,7 @@ class StratifiedValidNumbers(BaseModel):
 
 @app.get("/")
 async def root():
-    return {"message": "Sigma API is up and running!"}
+    return {"message": "Sigma API is up and running! \n For documentation access /docs (Swagger UI) or /redoc (ReDoc)"}
 
 
 # check if an id number is valid
@@ -106,7 +106,8 @@ async def search(id_number: str) -> Dict[str, list]:
 @app.get("/retrieve_valid_id_numbers", response_model = ValidIdNumbers)
 async def retrieve_valid_id_numbers() -> Dict[str, int]:
     """
-    This endpoint returns all the valid id numbers in the database
+    This endpoint returns the total number of 
+    valid id numbers in the database
     """
     filename = 'data/fnr.txt'
 
