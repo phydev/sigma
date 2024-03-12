@@ -4,7 +4,6 @@ This file contains helper functions used in the API.
 
 from typing import Type, Dict, Union
 from datetime import date
-import pandas as pd
 import asyncio
 
 # for costum logging
