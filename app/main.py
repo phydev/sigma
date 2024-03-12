@@ -46,9 +46,8 @@ class AgeGroups(BaseModel):
     range_above_65: int = Field(..., alias=">=65")
 
 class StratifiedValidNumbers(BaseModel):
-    male: int
-    female: int
-    age_groups: AgeGroups
+    male: AgeGroups
+    female: AgeGroups
 
 
 @app.get("/")
@@ -140,27 +139,39 @@ async def retrieve_stratified_valid_numbers() -> Dict[str, object]:
     # we will use a dictionary to store the counts
     
     valid_numbers = {
-                        'male': 0,
-                        'female': 0,
-                        'age_groups': 
+                        'male': 
                         {
                            '0-19': 0, 
                             '20-64': 0,
                             '>=65': 0
-                        }
+                        },
+                        'female': 
+                        {
+                           '0-19': 0, 
+                            '20-64': 0,
+                            '>=65': 0
+                        },
+                        
                     }
     
     with open(filename, 'r') as file:
         for line in file:
-            if is_valid_id_number(line.strip()):
-                valid_numbers[get_gender_from(line.strip())] += 1
-                age = get_age_from(line.strip())
+            clean_line = line.strip() # remove "\n"
+
+            # check if it is a valid number
+            if is_valid_id_number(clean_line):
+
+                # retrieve gender and age
+                gender = get_gender_from(clean_line)
+                age = get_age_from(clean_line)
+
+                # stratify the age groups
                 if age < 20:
-                    valid_numbers['age_groups']['0-19'] += 1
+                    valid_numbers[gender]['0-19'] += 1
                 elif age < 65:
-                    valid_numbers['age_groups']['20-64'] += 1
+                    valid_numbers[gender]['20-64'] += 1
                 else:
-                    valid_numbers['age_groups']['>=65'] += 1
+                    valid_numbers[gender]['>=65'] += 1
     
  
     return valid_numbers

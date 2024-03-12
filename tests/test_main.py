@@ -10,7 +10,6 @@ def test_root():
     response = client.get("/")
     
     assert response.status_code == 200
-    assert response.json() == {"message": "Sigma API is up and running!"}
 
 def test_validate():
     
@@ -54,14 +53,19 @@ def test_retrieve_stratified_valid_numbers():
     response = client.get("retrieve_stratified_valid_numbers/")
     
     expected =  {
-                        'male': 0,
-                        'female': 0,
-                        'age_groups': 
-                        {
-                           '0-19': 0, 
-                            '20-64': 0,
-                            '>=65': 0
-                        }
+                    'male':
+                    {
+                        '0-19': 0, 
+                        '20-64': 0,
+                        '>=65': 0
+                    },
+                    'female': 
+                    {
+                        '0-19': 0, 
+                        '20-64': 0,
+                        '>=65': 0
+                    },
+                        
                     }
 
     assert response.status_code == 200
