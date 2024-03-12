@@ -7,7 +7,9 @@ from datetime import date
 import asyncio
 
 # for costum logging
-from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
+from starlette.middleware.base import (
+    BaseHTTPMiddleware,
+    RequestResponseEndpoint)
 from starlette.requests import Request
 from starlette.responses import Response
 import time
@@ -39,13 +41,14 @@ def split(id_number: str) -> Dict[str, Union[Type[date], str]]:
     the birthday (first 6 numbers) and the person number (last 5 numbers)
 
     :param id_number: 11 digits Nowegian id number
-    :return splitted_id_number: a dictionary containing the birthday and person number
+    :return splitted_id_number: a dictionary containing the
+    birthday and person number
 
     """
 
     # test if id_number is provided as string
 
-    if type(id_number) != str:
+    if type(id_number) is not str:
         raise TypeError("The input must be an integer encoded as string!")
 
     person_number = id_number[6:]
@@ -61,7 +64,10 @@ def split(id_number: str) -> Dict[str, Union[Type[date], str]]:
     # with the format year-month-day
 
     if validate_date(birth_year, id_number[2:4], id_number[:2]):
-        birthday = date(int(birth_year), int(id_number[2:4]), int(id_number[:2]))
+        birthday = date(int(birth_year),
+                        int(id_number[2:4]),
+                        int(id_number[:2])
+                        )
     else:
         birthday = date(3000, 12, 25)
 
@@ -79,7 +85,7 @@ def is_odd(number: int) -> bool:
     :return: True if the number is odd, False otherwise
     """
 
-    if type(number) != int:
+    if type(number) is not int:
         raise TypeError(
             "The input must be an integer! \
                         Oddness is only defined for integers."
@@ -124,7 +130,7 @@ def is_valid_id_number(id_number: str) -> bool:
     control_vector1 = [3, 7, 6, 1, 8, 9, 4, 5, 2, 1]
     control_vector2 = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2, 1]
 
-    if type(id_number) != str:
+    if type(id_number) is not str:
         raise TypeError("The input must be an integer encoded as string!")
 
     if not id_number.isdigit():
@@ -142,7 +148,7 @@ def is_valid_id_number(id_number: str) -> bool:
         return False
     elif control_number_2 % 11 != 0:
         return False
-    elif get_age_from(id_number) == False:
+    elif get_age_from(id_number) is False:
         return False
     else:
         return True
@@ -188,7 +194,8 @@ async def run_awk(filename: str, id_number: str) -> list[str]:
     """
     This function runs the awk command to search for an entry in a
     data file and returns the line number of the entry.
-    We define this function as asyncronous to avoid blocking the event loop.
+    We define this function as asyncronous to avoid blocking
+    the event loop.
     :param filename: the name of the file to search
     :param id_number: the id_number to search for
     :return line_number: the line number of the entry
@@ -261,6 +268,8 @@ class TimingMiddleware(BaseHTTPMiddleware):
         response = await call_next(request)
         process_time = time.time() - start_time
         self.logger.info(
-            f"{request.method} {request.url} - {response.status_code}: Response time: {process_time:.5f}s"
+            f"{request.method} {request.url} - \
+                {response.status_code}: \
+                    Response time: {process_time:.5f}s"
         )
         return response
