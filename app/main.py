@@ -11,7 +11,26 @@ from pydantic import BaseModel, Field
 
 from typing import Dict
 
-description = " \n ## Endpoints: \n - **/validate/{id_number}** \n  You will be able to check if the id number is valid.\n- **/gender/{id_number}**\n    You will be able to obtain the gender of the person.\n - **/age/{id_number}** You will be able to obtain the age of the person.\n - **/search/{id_number}** You will be able to search for the id number in the database.\n - **/retrieve_valid_id_numbers** You will be able to retrieve the total number of valid id numbers in the database.\n - **/retrieve_stratified_valid_numbers**\n You will be able to retrieve the number of valid \n id numbers stratified by gender and age groups."
+description = (
+    " \n"
+    "## Endpoints: \n"
+    "- **/validate/{id_number}** \n"
+    "  You will be able to check if the id number is valid.\n"
+    "- **/gender/{id_number}**\n"
+    "    You will be able to obtain the gender of the person.\n"
+    "- **/age/{id_number}** You will be able to obtain"
+    " the age of the person.\n"
+    "- **/search/{id_number}** You will be able to search"
+    " for the id number in "
+    "the database.\n"
+    "- **/retrieve_valid_id_numbers** You will be able"
+    " to retrieve the total "
+    "number of valid id numbers in the database.\n"
+    "- **/retrieve_stratified_valid_numbers**\n"
+    "  You will be able to retrieve the number of valid \n"
+    "  id numbers stratified by gender and age groups."
+)
+
 
 app = FastAPI(
     title="Sigma API",
@@ -68,7 +87,11 @@ class StratifiedValidNumbers(BaseModel):
 @app.get("/")
 async def root():
     return {
-        "message": "Sigma API is up and running! \n For documentation access /docs (Swagger UI) or /redoc (ReDoc)"
+        "message": (
+            "Sigma API is up and running!"
+            " For documentation access /docs"
+            " (Swagger UI) or /redoc (ReDoc)"
+        )
     }
 
 
@@ -145,7 +168,8 @@ async def retrieve_valid_id_numbers() -> Dict[str, int]:
     return response
 
 
-@app.get("/retrieve_stratified_valid_numbers", response_model=StratifiedValidNumbers)
+@app.get("/retrieve_stratified_valid_numbers",
+         response_model=StratifiedValidNumbers)
 async def retrieve_stratified_valid_numbers() -> Dict[str, object]:
     """
     This endpoint returns the number of valid id numbers
