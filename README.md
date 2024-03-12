@@ -45,16 +45,20 @@ The repository is structured as follows:
 ├── app
 │   ├── __init__.py
 │   ├── main.py
-│   ├── functions.py
+│   ├── backend.py
 ├── tests
 │   ├── __init__.py
 │   ├── test_main.py
-│   ├── test_functions.py
+│   ├── test_backend.py
 ├── docs
 ├── data
 │   ├── fnr.txt
+│   ├── test_data.txt
+├── .github
+|   ├── workflows
+│       ├── python-app.yml 
 ├── Dockerfile
-├── docker-compose.yml
+├── compose-dev.yaml
 ├── README.md
 ```
 
@@ -78,3 +82,5 @@ TOTAL                154     11    93%
 (7 durations < 0.005s hidden.  Use -vv to show these durations.)
 ======================== 14 passed, 1 warning in 36.67s ========================
 ```
+
+The slowest endpoints are `retrieve_valid_id_numbers` and `retrieve_stratified_valid_numbers` with response times of 9.88s and 15.29s respectively.
