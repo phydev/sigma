@@ -242,8 +242,8 @@ def stratified_valid_numbers(filename: str) -> dict:
     with open(filename, "r") as file:
 
         for line in file:
-            # remove spaces at the begining and end 
-            clean_line = line.strip()  
+            # remove spaces at the begining and end
+            clean_line = line.strip()
 
             # check if it is a valid number
             is_valid = is_valid_id_number(clean_line)
