@@ -6,7 +6,7 @@ from typing import Type, Dict, Union
 from datetime import date
 import asyncio
 
-# for costum logging
+# for custom logging
 from starlette.middleware.base import (
     BaseHTTPMiddleware,
     RequestResponseEndpoint)
@@ -242,7 +242,8 @@ def stratified_valid_numbers(filename: str) -> dict:
     with open(filename, "r") as file:
 
         for line in file:
-            clean_line = line.strip()  # remove "\n" and spaces
+            # remove spaces at the begining and end 
+            clean_line = line.strip()  
 
             # check if it is a valid number
             is_valid = is_valid_id_number(clean_line)
